@@ -19,7 +19,9 @@ class ChatRoomListCreateView(generics.ListCreateAPIView):
         return ChatRoom.objects.filter(users=self.request.user)
 
     def perform_create(self, serializer):
-        chat_room = serializer.save()
+        names = self.request.data.get('names', 'New Chat')
+        chat_room = serializer.save(names=names)
+        
         # Add the current user and the selected users to the chat room
         user_ids = self.request.data.get('user_ids', [])
         users = list(CustomUser.objects.filter(id__in=user_ids))
@@ -62,10 +64,10 @@ class MarkMessagesAsRead(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request, chatroom_id):
-        # Mark all unread messages in the chatroom as read
+        # Mark all unread messages in the chatroom that were not sent by the current user
         Message.objects.filter(
             chatroom_id=chatroom_id,
-            user=self.request.user,
+            user__in=CustomUser.objects.exclude(id=request.user.id),
             is_read=False
         ).update(is_read=True)
         return Response(status=status.HTTP_200_OK)
