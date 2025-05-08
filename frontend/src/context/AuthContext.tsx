@@ -17,16 +17,29 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
+function getCookie(name: string) {
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) return parts.pop()?.split(';').shift();
+}
+
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const navigate = useNavigate();
 
   const login = async (email: string, password: string) => {
     try {
+      // First, get the CSRF token
+      const csrfResponse = await fetch('http://localhost:8000/userauth/csrf/', { 
+        credentials: 'include'
+      });
+      
+      // Now make the login request with the CSRF token
       const response = await fetch('http://localhost:8000/userauth/login/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'X-CSRFToken': getCookie('csrftoken') || '',
         },
         body: JSON.stringify({ email, password }),
         credentials: 'include',
@@ -52,10 +65,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const register = async (userData: any) => {
     try {
+      // First, get the CSRF token
+      const csrfResponse = await fetch('http://localhost:8000/userauth/csrf/', { 
+        credentials: 'include'
+      });
+      
+      // Now make the register request with the CSRF token
       const response = await fetch('http://localhost:8000/userauth/register/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'X-CSRFToken': getCookie('csrftoken') || '',
         },
         body: JSON.stringify(userData),
         credentials: 'include',
