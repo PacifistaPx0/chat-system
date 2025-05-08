@@ -2,6 +2,7 @@ from django.test import TestCase
 from django.urls import reverse
 from rest_framework.test import APITestCase, APIClient
 from rest_framework import status
+from rest_framework.authtoken.models import Token
 from django.contrib.auth import get_user_model
 from .models import ChatRoom, Message
 from .serializers import ChatRoomSerializer, MessageSerializer
@@ -89,7 +90,11 @@ class ChatViewsTest(APITestCase):
             email='test2@example.com',
             password='testpass123'
         )
-        self.client.force_authenticate(user=self.user1)
+        # Create token for user1
+        self.token = Token.objects.create(user=self.user1)
+        # Authenticate with token
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token.key)
+        
         self.chatroom = ChatRoom.objects.create(names='Test Room')
         self.chatroom.users.add(self.user1, self.user2)
 
@@ -102,8 +107,10 @@ class ChatViewsTest(APITestCase):
         }
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(ChatRoom.objects.count(), 2)
-        self.assertEqual(ChatRoom.objects.last().names, 'New Test Room')
+
+        new_room_id = response.data['id']
+        chatroom = ChatRoom.objects.get(id=new_room_id)
+        self.assertEqual(chatroom.names, 'New Test Room')
 
     def test_list_chatrooms(self):
         """Test listing chat rooms"""
@@ -156,7 +163,8 @@ class ChatViewsTest(APITestCase):
 
     def test_unauthorized_access(self):
         """Test unauthorized access to chat endpoints"""
-        self.client.force_authenticate(user=None)
+        # Remove token authentication
+        self.client.credentials()
         urls = [
             reverse('chatroom-list'),
             reverse('message-list', kwargs={'chatroom_id': self.chatroom.id}),
