@@ -28,9 +28,10 @@ INSTALLED_APPS = [
 
     # Third-party apps
     'rest_framework',
-    'rest_framework.authtoken',  # Add this
+    'rest_framework.authtoken',
     'channels',
     'corsheaders',
+    'daphne',  # Add daphne
 
     # my app
     'userauth',
@@ -66,6 +67,7 @@ TEMPLATES = [
     },
 ]
 
+# Channels
 ASGI_APPLICATION = 'chat_project.asgi.application'
 CHANNEL_LAYERS = {
     'default': {
@@ -76,6 +78,7 @@ CHANNEL_LAYERS = {
     },
 }
 
+# WSGI
 WSGI_APPLICATION = 'chat_project.wsgi.application'
 
 # Custom User Model
@@ -105,6 +108,19 @@ REST_FRAMEWORK = {
     ],
 }
 
+# Channels specific auth
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('127.0.0.1', 6379)],
+        },
+    },
+}
+
+# WebSocket URL
+WEBSOCKET_URL = '/ws/'
+
 # CORS Settings
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",  # Vite default port
@@ -128,8 +144,8 @@ CSRF_TRUSTED_ORIGINS = [
     "http://localhost:5173",
 ]
 CSRF_USE_SESSIONS = False
-CSRF_COOKIE_HTTPONLY = False  # Allow JavaScript access to the CSRF token
-CSRF_COOKIE_SECURE = False  # Set to True in production with HTTPS
+CSRF_COOKIE_HTTPONLY = False
+CSRF_COOKIE_SECURE = False
 CSRF_COOKIE_SAMESITE = 'Lax'
 CSRF_COOKIE_NAME = 'csrftoken'
 
@@ -167,4 +183,4 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Session settings
 SESSION_COOKIE_SAMESITE = 'Lax'
 SESSION_COOKIE_HTTPONLY = True
-SESSION_COOKIE_SECURE = False  # Set to True in production with HTTPS
+SESSION_COOKIE_SECURE = False

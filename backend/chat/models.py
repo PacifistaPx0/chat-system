@@ -10,6 +10,9 @@ class ChatRoom(models.Model):
     class Meta:
         ordering = ['-updated_at']
 
+    def __str__(self):
+        return f'{self.name}'
+
 class Message(models.Model):
     chatroom = models.ForeignKey(ChatRoom, related_name="messages", on_delete=models.CASCADE)
     user = models.ForeignKey(CustomUser, related_name="messages", on_delete=models.CASCADE)
@@ -19,4 +22,7 @@ class Message(models.Model):
 
     class Meta:
         ordering = ['timestamp']
+
+    def __str__(self):
+        return f'{self.user.email}: {self.content} [{self.timestamp}]'
 
