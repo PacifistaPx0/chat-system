@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
@@ -9,57 +9,100 @@ interface Message {
   timestamp: string;
 }
 
+interface WebSocketMessage {
+  message: string;
+  username: string;
+  user_id: number;
+}
+
 export default function Chat() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState('');
   const [users, setUsers] = useState<any[]>([]);
+  const wsRef = useRef<WebSocket | null>(null);
 
   useEffect(() => {
     if (!user) {
       navigate('/login');
-    } else {
-      // For demo purposes, we'll use some dummy data
-      setUsers([
-        { id: 1, username: 'john_doe', isOnline: true },
-        { id: 2, username: 'jane_smith', isOnline: false },
-        // Add more users as needed
-      ]);
-
-      setMessages([
-        {
-          id: 1,
-          sender: 'john_doe',
-          content: 'Hey there!',
-          timestamp: '2025-05-07T10:00:00'
-        },
-        {
-          id: 2,
-          sender: user.username,
-          content: 'Hello! How are you?',
-          timestamp: '2025-05-07T10:01:00'
-        },
-      ]);
+      return;
     }
+
+    // Fetch users
+    fetchUsers();
+
+    // Connect to WebSocket
+    const wsUrl = `ws://localhost:8000/ws/chat/testroom/`;
+    const ws = new WebSocket(wsUrl);
+
+    ws.onopen = () => {
+      console.log('WebSocket connected');
+    };
+
+    ws.onmessage = (event) => {
+      try {
+        const data: WebSocketMessage = JSON.parse(event.data);
+        const newMessage: Message = {
+          id: messages.length + 1,
+          sender: data.username,
+          content: data.message,
+          timestamp: new Date().toISOString()
+        };
+        setMessages(prev => [...prev, newMessage]);
+      } catch (error) {
+        console.error('Error parsing message:', error);
+      }
+    };
+
+    ws.onerror = (error) => {
+      console.error('WebSocket error:', error);
+    };
+
+    ws.onclose = () => {
+      console.log('WebSocket disconnected');
+    };
+
+    wsRef.current = ws;
+
+    // Cleanup on unmount
+    return () => {
+      if (wsRef.current) {
+        wsRef.current.close();
+      }
+    };
   }, [user, navigate]);
+
+  const fetchUsers = async () => {
+    try {
+      const response = await fetch('http://localhost:8000/chat/users/', {
+        credentials: 'include',
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setUsers(data);
+      }
+    } catch (error) {
+      console.error('Error fetching users:', error);
+    }
+  };
 
   const handleSendMessage = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newMessage.trim()) return;
+    if (!newMessage.trim() || !wsRef.current) return;
 
-    const message: Message = {
-      id: messages.length + 1,
-      sender: user?.username || 'anonymous',
-      content: newMessage,
-      timestamp: new Date().toISOString(),
-    };
+    // Send message through WebSocket
+    wsRef.current.send(JSON.stringify({
+      message: newMessage
+    }));
 
-    setMessages([...messages, message]);
     setNewMessage('');
   };
 
   const handleLogout = () => {
+    if (wsRef.current) {
+      wsRef.current.close();
+    }
     logout();
     navigate('/login');
   };

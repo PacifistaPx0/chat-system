@@ -23,6 +23,7 @@ ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '').split(',')
 
 # Application definition
 INSTALLED_APPS = [
+    'daphne',  # Add daphne for ASGI server
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -35,7 +36,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'channels',
     'corsheaders',
-    'daphne',  # Add daphne
+    
 
     # my app
     'userauth',
@@ -128,7 +129,7 @@ WEBSOCKET_URL = '/ws/'
 # CORS Settings
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
-    "https://websocketking.com/",
+    "http://localhost:5174",
 ]
 CORS_ALLOW_CREDENTIALS = True
 CORS_EXPOSE_HEADERS = ['Content-Type', 'X-CSRFToken']
@@ -146,7 +147,7 @@ CORS_ALLOW_HEADERS = [
 
 # CSRF Settings
 CSRF_TRUSTED_ORIGINS = [
-    "http://localhost:5173",
+    "http://localhost:5173", "http://localhost:5174",
 ]
 CSRF_USE_SESSIONS = False
 CSRF_COOKIE_HTTPONLY = False
