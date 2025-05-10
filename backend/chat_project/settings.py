@@ -5,17 +5,21 @@ Django settings for chat_project.
 import os
 from datetime import timedelta
 from pathlib import Path
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'your-secret-key'
+SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '').split(',')
 
 # Application definition
 INSTALLED_APPS = [
@@ -123,7 +127,8 @@ WEBSOCKET_URL = '/ws/'
 
 # CORS Settings
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",  # Vite default port
+    "http://localhost:5173",
+    "https://websocketking.com/",
 ]
 CORS_ALLOW_CREDENTIALS = True
 CORS_EXPOSE_HEADERS = ['Content-Type', 'X-CSRFToken']

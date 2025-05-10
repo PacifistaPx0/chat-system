@@ -30,7 +30,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const login = async (email: string, password: string) => {
     try {
       // First, get the CSRF token
-      const csrfResponse = await fetch('http://localhost:8000/userauth/csrf/', { 
+      await fetch('http://localhost:8000/userauth/csrf/', { 
         credentials: 'include'
       });
       
@@ -66,7 +66,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const register = async (userData: any) => {
     try {
       // First, get the CSRF token
-      const csrfResponse = await fetch('http://localhost:8000/userauth/csrf/', { 
+      await fetch('http://localhost:8000/userauth/csrf/', { 
         credentials: 'include'
       });
       

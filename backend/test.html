@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>WebSocket Chat Test</title>
+</head>
+<body>
+    <h1>WebSocket Chat Test</h1>
+    <input type="text" id="messageInput" placeholder="Type a message..." />
+    <button onclick="sendMessage()">Send</button>
+
+    <ul id="messages"></ul>
+
+    <script>
+        const roomName = "testroom";  // match with your URL pattern
+        const socket = new WebSocket("ws://f348-102-89-41-22.ngrok-free.app/ws/chat/" + roomName + "/");
+
+        socket.onopen = function(e) {
+            console.log("Connection established.");
+        };
+
+        socket.onmessage = function(event) {
+            try {
+                const data = JSON.parse(event.data);
+                const messages = document.getElementById("messages");
+                const message = document.createElement("li");
+                message.textContent = `${data.username}: ${data.message}`;
+                messages.appendChild(message);
+            } catch (error) {
+                console.error("Error parsing message:", error);
+            }
+        };
+
+        socket.onclose = function(event) {
+            console.log("WebSocket closed:", event);
+        };
+
+        socket.onerror = function(error) {
+            console.error("WebSocket error:", error);
+        };
+
+        function sendMessage() {
+            const input = document.getElementById("messageInput");
+            const message = input.value.trim();
+            
+            if (message && socket.readyState === WebSocket.OPEN) {
+                // Send message as JSON
+                socket.send(JSON.stringify({
+                    message: message
+                }));
+                input.value = '';
+            }
+        }
+    </script>
+</body>
+</html>
