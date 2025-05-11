@@ -11,7 +11,7 @@ class ChatRoom(models.Model):
         ordering = ['-updated_at']
 
     def __str__(self):
-        return f'{self.name}'
+        return f'{self.names}'
 
 class Message(models.Model):
     chatroom = models.ForeignKey(ChatRoom, related_name="messages", on_delete=models.CASCADE)

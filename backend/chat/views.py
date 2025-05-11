@@ -70,10 +70,21 @@ class MessageListCreateView(generics.ListCreateAPIView):
 
     def get_queryset(self):
         chatroom_id = self.kwargs.get('chatroom_id')
-        return Message.objects.filter(chatroom_id=chatroom_id)
+        # Get the last 50 messages, ordered by timestamp
+        return Message.objects.filter(
+            chatroom_id=chatroom_id
+        ).select_related('user').order_by('-timestamp')[:50]
 
     def create(self, request, *args, **kwargs):
         chatroom_id = self.kwargs.get('chatroom_id')
+        try:
+            chatroom = ChatRoom.objects.get(id=chatroom_id, users=request.user)
+        except ChatRoom.DoesNotExist:
+            return Response(
+                {'error': 'Chat room not found or access denied'},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
         data = request.data.copy()
         data['chatroom'] = chatroom_id
         serializer = self.get_serializer(data=data)

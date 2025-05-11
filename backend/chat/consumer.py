@@ -6,16 +6,19 @@ from userauth.models import CustomUser
 
 class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
-        self.room_name = self.scope['url_route']['kwargs']['room_name']
-        self.room_group_name = f'chat_{self.room_name}'
+        self.room_id = self.scope['url_route']['kwargs']['room_id']
+        self.room_group_name = f'chat_{self.room_id}'
         self.user = self.scope.get('user', None)
 
-        # if not self.user or self.user.is_anonymous:
-        #     await self.close()
-        #     return
+        if not self.user or self.user.is_anonymous:
+            await self.close()
+            return
 
-        # Get or create the chat room
-        self.chat_room = await self.get_or_create_room(self.room_name)
+        # Get the chat room and verify access
+        self.chat_room = await self.get_room(self.room_id)
+        if not self.chat_room or not await self.has_room_access():
+            await self.close()
+            return
         
         # Join room group
         await self.channel_layer.group_add(
@@ -67,18 +70,15 @@ class ChatConsumer(AsyncWebsocketConsumer):
         }))
 
     @database_sync_to_async
-    def get_or_create_room(self, room_name):
+    def get_room(self, room_id):
         try:
-            room, created = ChatRoom.objects.get_or_create(
-                names=room_name,
-                defaults={'names': room_name}
-            )
-            if created and self.user and not self.user.is_anonymous:
-                room.users.add(self.user)
-            return room
-        except Exception as e:
-            print(f"Error getting/creating room: {str(e)}")
+            return ChatRoom.objects.get(id=room_id)
+        except ChatRoom.DoesNotExist:
             return None
+
+    @database_sync_to_async
+    def has_room_access(self):
+        return self.chat_room.users.filter(id=self.user.id).exists()
 
     @database_sync_to_async
     def save_message(self, message_content):
@@ -92,3 +92,65 @@ class ChatConsumer(AsyncWebsocketConsumer):
             print(f"Error saving message: {str(e)}")
             return None
 
+class UserStatusConsumer(AsyncWebsocketConsumer):
+    async def connect(self):
+        self.user = self.scope.get('user', None)
+
+        if not self.user or self.user.is_anonymous:
+            await self.close()
+            return 
+        
+        #join status group
+        await self.channel_layer.group_add(
+            'user_status',
+            self.channel_name
+        )
+
+        # Mark user as online
+        await self.update_user_status(True)
+
+        # Broadcast user online status
+        await self.channel_layer.group_send(
+            'user_status',
+            {
+                'type': 'user_status',
+                'user_id': self.user.id,
+                'status': 'online'
+            }
+        )
+
+        await self.accept()
+
+    async def disconnect(self, close_code):
+        if self.user and not self.user.is_anonymous:
+            # Mark user as offline
+            await self.update_user_status(False)
+
+            # Broadcast user offline status
+            await self.channel_layer.group_send(
+                'user_status',
+                {
+                    'type': 'user_status',
+                    'user_id': self.user.id,
+                    'status': False
+                }
+            )
+
+        # Leave status group
+        await self.channel_layer.group_discard(
+            'user_status',
+            self.channel_name
+        )
+
+    async def user_status(self, event):
+        # Send user status to WebSocket
+        await self.send(text_data=json.dumps({
+            'type': 'user_status',
+            'user_id': event['user_id'],
+            'status': event['status']
+        }))
+
+    @database_sync_to_async
+    def update_user_status(self, status):
+        self.user.is_online = status
+        self.user.save(update_fields=['is_online', 'last_seen'])
