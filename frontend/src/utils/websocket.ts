@@ -4,5 +4,7 @@ export const getWebSocketUrl = (roomName: string): string => {
     ? window.location.host
     : 'localhost:8000';
   
-  return `${protocol}//${host}/ws/chat/${roomName}/`;
+  // Ensure roomName is URL-safe
+  const safeRoomName = encodeURIComponent(roomName);
+  return `${protocol}//${host}/ws/chat/${safeRoomName}/`;
 };

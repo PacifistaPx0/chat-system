@@ -6,16 +6,16 @@ from userauth.models import CustomUser
 
 class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
-        self.room_id = self.scope['url_route']['kwargs']['room_id']
-        self.room_group_name = f'chat_{self.room_id}'
+        self.room_name = self.scope['url_route']['kwargs']['room_name']
+        self.room_group_name = f'chat_{self.room_name}'
         self.user = self.scope.get('user', None)
 
         if not self.user or self.user.is_anonymous:
             await self.close()
             return
 
-        # Get the chat room and verify access
-        self.chat_room = await self.get_room(self.room_id)
+        # Get or create the chat room
+        self.chat_room = await self.get_or_create_room(self.room_name)
         if not self.chat_room or not await self.has_room_access():
             await self.close()
             return
@@ -70,15 +70,26 @@ class ChatConsumer(AsyncWebsocketConsumer):
         }))
 
     @database_sync_to_async
-    def get_room(self, room_id):
+    def get_or_create_room(self, room_name):
         try:
-            return ChatRoom.objects.get(id=room_id)
-        except ChatRoom.DoesNotExist:
+            room, created = ChatRoom.objects.get_or_create(
+                names=room_name,
+                defaults={'names': room_name}
+            )
+            if created and self.user and not self.user.is_anonymous:
+                room.users.add(self.user)
+            return room
+        except Exception as e:
+            print(f"Error getting/creating room: {str(e)}")
             return None
-
+        
     @database_sync_to_async
     def has_room_access(self):
-        return self.chat_room.users.filter(id=self.user.id).exists()
+        try:
+            return self.chat_room.users.filter(id=self.user.id).exists()
+        except Exception as e:
+            print(f"Error checking room access: {str(e)}")
+            return False
 
     @database_sync_to_async
     def save_message(self, message_content):

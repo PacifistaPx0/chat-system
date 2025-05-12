@@ -9,8 +9,8 @@ from .views import (
 
 urlpatterns = [
     path('rooms/', ChatRoomListCreateView.as_view(), name='chatroom-list'),
-    path('rooms/<int:id>/', ChatRoomDetailView.as_view(), name='chatroom-detail'),
-    path('rooms/<int:chatroom_id>/messages/', MessageListCreateView.as_view(), name='message-list'),
+    path('rooms/<str:name>/', ChatRoomDetailView.as_view(), name='chatroom-detail'),
+    path('rooms/<str:room_name>/messages/', MessageListCreateView.as_view(), name='message-list'),
     path('users/', ChatUsersView.as_view(), name='chat-users'),
-    path('rooms/<int:chatroom_id>/read/', MarkMessagesAsRead.as_view(), name='mark-messages-read'),
+    path('rooms/<str:room_name>/read/', MarkMessagesAsRead.as_view(), name='mark-messages-read'),
 ]

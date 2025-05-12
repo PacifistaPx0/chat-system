@@ -30,6 +30,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
+
   // Check authentication status when app loads
   useEffect(() => {
     checkAuth();
@@ -134,33 +135,31 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const logout = async () => {
+  const logout = async () =>{
     try {
-      const response = await fetch('http://localhost:8000/userauth/logout/', {
+      const response = await fetch("http://localhost:8000/userauth/logout/", {
         method: 'POST',
         credentials: 'include',
         headers: {
-          'X-CSRFToken': getCookie('csrftoken') || '',
+          'X-CRSFToken': getCookie('crsftoken') || '',
         },
       });
 
       if (!response.ok) {
         throw new Error('Logout failed');
       }
-
-      setUser(null);
-      navigate('/login');
     } catch (error) {
-      console.error('Logout error:', error);
+      console.error('logout error', error);
     }
+    
   };
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <div>Loading...</div>; // or a loading spinner
   }
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, register, logout, checkAuth }}>
+    <AuthContext.Provider value={{ user, loading, login, register, logout , checkAuth }}>
       {children}
     </AuthContext.Provider>
   );

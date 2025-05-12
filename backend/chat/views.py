@@ -49,7 +49,8 @@ class ChatRoomListCreateView(generics.ListCreateAPIView):
 class ChatRoomDetailView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = ChatRoomSerializer
     permission_classes = [IsAuthenticated]
-    lookup_field = 'id'
+    lookup_field = 'names'
+    lookup_url_kwarg = 'name'
 
     def permission_denied(self, request, message=None, code=None):
         if not request.successful_authenticator:
@@ -69,16 +70,19 @@ class MessageListCreateView(generics.ListCreateAPIView):
         super().permission_denied(request, message, code)
 
     def get_queryset(self):
-        chatroom_id = self.kwargs.get('chatroom_id')
-        # Get the last 50 messages, ordered by timestamp
-        return Message.objects.filter(
-            chatroom_id=chatroom_id
-        ).select_related('user').order_by('-timestamp')[:50]
+        room_name = self.kwargs.get('room_name')
+        try:
+            chatroom = ChatRoom.objects.get(names=room_name, users=self.request.user)
+            return Message.objects.filter(
+                chatroom=chatroom
+            ).select_related('user').order_by('-timestamp')[:50]
+        except ChatRoom.DoesNotExist:
+            return Message.objects.none()
 
     def create(self, request, *args, **kwargs):
-        chatroom_id = self.kwargs.get('chatroom_id')
+        room_name = self.kwargs.get('room_name')
         try:
-            chatroom = ChatRoom.objects.get(id=chatroom_id, users=request.user)
+            chatroom = ChatRoom.objects.get(names=room_name, users=request.user)
         except ChatRoom.DoesNotExist:
             return Response(
                 {'error': 'Chat room not found or access denied'},
@@ -86,7 +90,7 @@ class MessageListCreateView(generics.ListCreateAPIView):
             )
 
         data = request.data.copy()
-        data['chatroom'] = chatroom_id
+        data['chatroom'] = chatroom.id
         serializer = self.get_serializer(data=data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)

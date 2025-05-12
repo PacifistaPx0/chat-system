@@ -188,15 +188,17 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Session settings
 SESSION_ENGINE = 'django.contrib.sessions.backends.db'
-SESSION_COOKIE_AGE = 1209600  # 2 weeks in seconds
+SESSION_COOKIE_AGE = 1209600 #2 weeks 
 SESSION_COOKIE_NAME = 'sessionid'
-SESSION_COOKIE_SECURE = False  # Set to True in production with HTTPS
+SESSION_COOKIE_SECURE = False #set to true in production with HTTPS
 SESSION_COOKIE_HTTPONLY = True
 SESSION_COOKIE_SAMESITE = 'Lax'
-SESSION_SAVE_EVERY_REQUEST = True  # Updates the session on every request
+SESSION_SAVE_EVERY_REQUEST = True #update session on every request
 
-# User session timeout
-SESSION_IDLE_TIMEOUT = 1200  # 20 minutes in seconds
+#user session timeout 
+SESSION_IDLE_TIMEOUT = 1200 #20 min 
 
-# Whether to store the session data on every request
+#whether to store the session data on every request
 SESSION_SAVE_EVERY_REQUEST = True
+SESSION_COOKIE_HTTPONLY = True
+SESSION_COOKIE_SECURE = False

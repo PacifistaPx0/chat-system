@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import { getWebSocketUrl } from '../utils/websocket';
 
 interface Message {
   id: number;
@@ -75,10 +76,10 @@ export default function Chat() {
     if (!activeRoom) return;
 
     // Fetch chat history for the active room
-    fetchChatHistory(activeRoom.id);
+    fetchChatHistory(activeRoom.names);
     
     // Connect to WebSocket for the active room
-    const wsUrl = `ws://localhost:8000/ws/chat/${activeRoom.id}/`;
+    const wsUrl = getWebSocketUrl(activeRoom.names);
     const ws = new WebSocket(wsUrl);
 
     ws.onopen = () => {
@@ -135,9 +136,9 @@ export default function Chat() {
     }
   };
 
-  const fetchChatHistory = async (roomId: number) => {
+  const fetchChatHistory = async (roomName: string) => {
     try {
-      const response = await fetch(`http://localhost:8000/chat/rooms/${roomId}/messages/`, {
+      const response = await fetch(`http://localhost:8000/chat/rooms/${roomName}/messages/`, {
         credentials: 'include',
       });
       if (response.ok) {
