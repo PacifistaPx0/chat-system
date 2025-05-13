@@ -75,7 +75,7 @@ class MessageListCreateView(generics.ListCreateAPIView):
             chatroom = ChatRoom.objects.get(names=room_name, users=self.request.user)
             return Message.objects.filter(
                 chatroom=chatroom
-            ).select_related('user').order_by('-timestamp')[:50]
+            ).select_related('user').order_by('timestamp')[:50]
         except ChatRoom.DoesNotExist:
             return Message.objects.none()
 
