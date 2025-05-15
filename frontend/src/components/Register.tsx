@@ -1,8 +1,20 @@
+/**
+ * Register Component
+ * Handles new user registration with form validation
+ * Features:
+ * - Username, email, and password input fields
+ * - Password confirmation
+ * - Client-side validation
+ * - Error handling and display
+ * - Integration with AuthContext for registration
+ */
+
 import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { Link } from 'react-router-dom';
 
 export default function Register() {
+  // State management for form fields and error handling
   const [formData, setFormData] = useState({
     email: '',
     username: '',
@@ -11,8 +23,26 @@ export default function Register() {
     lastName: '',
   });
   const [error, setError] = useState('');
+  
+  // Get register function from authentication context
   const { register } = useAuth();
 
+  /**
+   * Updates form data state as user types
+   * @param e - Input change event
+   */
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
+  };
+
+  /**
+   * Validates form data and submits registration
+   * - Ensures all fields are filled
+   * - Handles registration errors
+   */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
@@ -20,13 +50,6 @@ export default function Register() {
     } catch (err) {
       setError('Failed to register. Please try again.');
     }
-  };
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
   };
 
   return (

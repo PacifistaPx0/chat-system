@@ -1,13 +1,31 @@
+/**
+ * Login Component
+ * Provides a user interface for authentication
+ * Features:
+ * - Email and password input fields
+ * - Error handling and display
+ * - Link to registration page
+ * - Integration with AuthContext for login functionality
+ */
+
 import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { Link } from 'react-router-dom';
 
 export default function Login() {
+  // State management for form fields and error handling
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  
+  // Get login function from authentication context
   const { login } = useAuth();
 
+  /**
+   * Handles form submission
+   * Prevents default form behavior and attempts to log in
+   * Displays error message if login fails
+   */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {

@@ -1,8 +1,14 @@
+/**
+ * Chat Component - Main chat interface of the application
+ * Handles real-time messaging, user presence, and chat room management
+ */
+
 import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { getWebSocketUrl } from '../utils/websocket';
 
+// Types for message data structure
 interface Message {
   id: number;
   sender: string;
@@ -10,29 +16,37 @@ interface Message {
   timestamp: string;
 }
 
+// Type for incoming WebSocket messages
 interface WebSocketMessage {
   message: string;
   username: string;
   user_id: number;
 }
 
+// Type for chat room data structure
 interface ChatRoom {
   id: number;
   names: string;
-  participants: any[];
+  participants: any[];  // TODO: Consider defining a proper type for participants
 }
 
 export default function Chat() {
+  // Authentication and navigation hooks
   const { user, logout } = useAuth();
   const navigate = useNavigate();
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [newMessage, setNewMessage] = useState('');
-  const [users, setUsers] = useState<any[]>([]);
-  const [rooms, setRooms] = useState<ChatRoom[]>([]);
-  const [activeRoom, setActiveRoom] = useState<ChatRoom | null>(null);
-  const wsRef = useRef<WebSocket | null>(null);
-  const statusWsRef = useRef<WebSocket | null>(null);
+  
+  // State management for chat functionality
+  const [messages, setMessages] = useState<Message[]>([]);  // Store chat messages
+  const [newMessage, setNewMessage] = useState('');         // Current message being typed
+  const [users, setUsers] = useState<any[]>([]);           // List of all users
+  const [rooms, setRooms] = useState<ChatRoom[]>([]);      // Available chat rooms
+  const [activeRoom, setActiveRoom] = useState<ChatRoom | null>(null);  // Currently selected room
+  
+  // WebSocket references for real-time communication
+  const wsRef = useRef<WebSocket | null>(null);           // Main chat WebSocket
+  const statusWsRef = useRef<WebSocket | null>(null);     // User status WebSocket
 
+  // Initial setup effect - runs on component mount
   useEffect(() => {
     if (!user) {
       navigate('/login');
@@ -71,7 +85,7 @@ export default function Chat() {
     };
   }, [user, navigate]);
 
-  // Connect to WebSocket when activeRoom changes
+  // Room connection effect - runs when active room changes
   useEffect(() => {
     if (!activeRoom) return;
 
@@ -118,6 +132,10 @@ export default function Chat() {
     };
   }, [activeRoom]);
 
+  /**
+   * Fetches available chat rooms from the server
+   * Sets the first room as active if none is selected
+   */
   const fetchRooms = async () => {
     try {
       const response = await fetch('http://localhost:8000/chat/rooms/', {
@@ -136,6 +154,10 @@ export default function Chat() {
     }
   };
 
+  /**
+   * Fetches chat history for a specific room
+   * @param roomName - Name of the room to fetch history for
+   */
   const fetchChatHistory = async (roomName: string) => {
     try {
       const response = await fetch(`http://localhost:8000/chat/rooms/${roomName}/messages/`, {
@@ -155,6 +177,9 @@ export default function Chat() {
     }
   };
 
+  /**
+   * Fetches list of all users and their online status
+   */
   const fetchUsers = async () => {
     try {
       const response = await fetch('http://localhost:8000/chat/users/', {
@@ -169,6 +194,10 @@ export default function Chat() {
     }
   };
 
+  /**
+   * Handles sending a new message
+   * Validates message content and WebSocket connection before sending
+   */
   const handleSendMessage = (e: React.FormEvent) => {
     e.preventDefault();
     if (!newMessage.trim() || !wsRef.current || !activeRoom) return;
@@ -181,6 +210,10 @@ export default function Chat() {
     setNewMessage('');
   };
 
+  /**
+   * Handles user logout
+   * Closes WebSocket connections and redirects to login page
+   */
   const handleLogout = () => {
     if (wsRef.current) {
       wsRef.current.close();
@@ -194,7 +227,11 @@ export default function Chat() {
 
   return (
     <div className="flex h-screen bg-gray-100">
-      {/* Sidebar - Rooms and Users List */}
+      {/* Layout structure:
+          - Left sidebar: Contains room list and user list with online status
+          - Main area: Displays chat messages and input field */}
+      
+      {/* Sidebar section */}
       <div className="w-64 bg-white border-r">
         <div className="p-4 border-b">
           <div className="flex items-center justify-between">
@@ -244,7 +281,7 @@ export default function Chat() {
         </div>
       </div>
 
-      {/* Chat Area */}
+      {/* Chat area section - Shows messages or prompt to select a room */}
       <div className="flex-1 flex flex-col">
         {activeRoom ? (
           <>
