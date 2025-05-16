@@ -9,6 +9,12 @@ class ChatConsumer(AsyncWebsocketConsumer):
         self.room_name = self.scope['url_route']['kwargs']['room_name']
         self.room_group_name = f'chat_{self.room_name}'
         self.user = self.scope.get('user', None)
+        header = self.scope['headers']
+        cookies = self.scope['cookies']
+
+
+        for item in header:
+            print(item[0].decode("utf-8") + " : " + item[1].decode("utf-8"))
 
         if not self.user or self.user.is_anonymous:
             await self.close()
