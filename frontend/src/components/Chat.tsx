@@ -233,44 +233,44 @@ export default function Chat() {
   };
 
   return (
-    <div className="fixed inset-0 flex bg-gradient-to-br from-gray-900 to-gray-800">
-      {/* Sidebar section with glassmorphism effect */}
-      <div className="w-80 flex flex-col backdrop-blur-md bg-white/10 border-r border-gray-700">
+    <div className="fixed inset-0 flex bg-zinc-900">
+      {/* Sidebar section */}
+      <div className="w-80 flex flex-col bg-zinc-800/50 border-r border-zinc-700/50">
         {/* Fixed Header */}
-        <div className="flex-none p-6 border-b border-gray-700">
+        <div className="flex-none p-6 border-b border-zinc-700/50">
           <div className="flex items-center justify-between">
-            <h2 className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
-              Chat Sphere
+            <h2 className="text-2xl font-bold text-white">
+              Chat
             </h2>
             <button
               onClick={handleLogout}
-              className="px-4 py-2 rounded-full text-sm text-red-400 hover:text-red-300 transition-colors duration-200"
+              className="px-4 py-2 rounded-lg text-sm text-zinc-400 hover:text-zinc-200 transition-colors"
             >
               Sign Out
             </button>
           </div>
-          <p className="text-sm text-gray-400 mt-2">
-            Welcome back, <span className="text-purple-400">{user?.username}</span>
+          <p className="text-sm text-zinc-400 mt-2">
+            Welcome, <span className="text-teal-400">{user?.username}</span>
           </p>
         </div>
 
         {/* Rooms and Users Lists */}
         <div className="flex-1 overflow-y-auto">
           {/* Rooms List */}
-          <div className="p-6 border-b border-gray-700">
-            <h3 className="text-lg font-medium text-gray-300 mb-4">Rooms</h3>
+          <div className="p-6 border-b border-zinc-700/50">
+            <h3 className="text-sm font-medium text-zinc-400 uppercase tracking-wider mb-4">Rooms</h3>
             <div className="space-y-2">
               {rooms.map((room) => (
                 <div
                   key={room.id}
                   onClick={() => setActiveRoom(room)}
-                  className={`p-3 cursor-pointer rounded-xl transition-all duration-200 ${
+                  className={`p-3 cursor-pointer rounded-lg transition-all ${
                     activeRoom?.id === room.id
-                      ? 'bg-gradient-to-r from-purple-500/20 to-pink-500/20 border border-purple-500/30'
-                      : 'hover:bg-white/5'
+                      ? 'bg-teal-500/10 border border-teal-500/20 text-teal-400'
+                      : 'text-zinc-300 hover:bg-zinc-700/50'
                   }`}
                 >
-                  <span className="text-gray-300">{room.names}</span>
+                  {room.names}
                 </div>
               ))}
             </div>
@@ -278,28 +278,28 @@ export default function Chat() {
 
           {/* Users List */}
           <div className="p-6">
-            <h3 className="text-lg font-medium text-gray-300 mb-4">Users</h3>
+            <h3 className="text-sm font-medium text-zinc-400 uppercase tracking-wider mb-4">Users</h3>
             <div className="space-y-2">
               {users.map((u) => (
                 <div
                   key={u.id}
-                  className="flex items-center p-3 rounded-xl hover:bg-white/5 transition-all duration-200"
+                  className="flex items-center p-3 rounded-lg hover:bg-zinc-700/50 transition-all"
                 >
                   <div className="relative">
-                    <div className="w-10 h-10 rounded-full bg-gradient-to-r from-purple-400 to-pink-400 flex items-center justify-center">
-                      <span className="text-white font-medium">
+                    <div className="w-9 h-9 rounded-lg bg-zinc-700 flex items-center justify-center">
+                      <span className="text-zinc-300 font-medium">
                         {u.username[0].toUpperCase()}
                       </span>
                     </div>
                     <div
-                      className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-gray-900 ${
-                        u.is_online ? 'bg-green-400' : 'bg-gray-400'
+                      className={`absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full border-2 border-zinc-800 ${
+                        u.is_online ? 'bg-teal-400' : 'bg-zinc-500'
                       }`}
                     />
                   </div>
                   <div className="ml-3">
-                    <p className="text-sm font-medium text-gray-300">{u.username}</p>
-                    <p className="text-xs text-gray-500">
+                    <p className="text-sm font-medium text-zinc-300">{u.username}</p>
+                    <p className="text-xs text-zinc-500">
                       {u.is_online ? 'Online' : 'Offline'}
                     </p>
                   </div>
@@ -311,12 +311,12 @@ export default function Chat() {
       </div>
 
       {/* Chat Area */}
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col bg-zinc-900">
         {activeRoom ? (
           <>
             {/* Messages Section */}
             <div className="flex-1 overflow-y-auto">
-              <div className="p-6 space-y-6">
+              <div className="p-6 space-y-4">
                 {messages.map((message) => (
                   <div
                     key={message.id}
@@ -325,24 +325,19 @@ export default function Chat() {
                     }`}
                   >
                     <div
-                      className={`max-w-xl rounded-2xl px-6 py-4 ${
+                      className={`max-w-xl rounded-lg px-4 py-2 ${
                         message.sender === user?.username
-                          ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white'
-                          : 'bg-white/10 text-gray-300'
+                          ? 'bg-teal-500 text-white'
+                          : 'bg-zinc-800 text-zinc-300'
                       }`}
                     >
-                      <div className="flex items-center space-x-2 mb-2">
-                        <div className="w-8 h-8 rounded-full bg-gradient-to-r from-purple-400 to-pink-400 flex items-center justify-center">
-                          <span className="text-white text-sm font-medium">
-                            {message.sender[0].toUpperCase()}
-                          </span>
-                        </div>
-                        <p className="text-sm font-medium">{message.sender}</p>
-                        <span className="text-xs opacity-50">
+                      <div className="flex items-center space-x-2 opacity-70 mb-1">
+                        <span className="text-sm">{message.sender}</span>
+                        <span className="text-xs">
                           {new Date(message.timestamp).toLocaleTimeString()}
                         </span>
                       </div>
-                      <p className="text-sm">{message.content}</p>
+                      <p className="text-sm leading-relaxed">{message.content}</p>
                     </div>
                   </div>
                 ))}
@@ -350,18 +345,18 @@ export default function Chat() {
             </div>
 
             {/* Message Input */}
-            <div className="flex-none p-6 backdrop-blur-md bg-gray-900/50 border-t border-gray-700">
+            <div className="flex-none p-4 border-t border-zinc-800">
               <form onSubmit={handleSendMessage} className="flex space-x-4">
                 <input
                   type="text"
                   value={newMessage}
                   onChange={(e) => setNewMessage(e.target.value)}
-                  placeholder="Type your message..."
-                  className="flex-1 bg-white/10 text-gray-300 rounded-xl px-6 py-4 focus:outline-none focus:ring-2 focus:ring-purple-500 placeholder-gray-500"
+                  placeholder="Message..."
+                  className="flex-1 bg-zinc-800 text-zinc-200 rounded-lg px-4 py-3 focus:outline-none focus:ring-1 focus:ring-teal-500/50 placeholder-zinc-500"
                 />
                 <button
                   type="submit"
-                  className="px-8 py-4 rounded-xl bg-gradient-to-r from-purple-500 to-pink-500 text-white font-medium hover:opacity-90 transition-opacity duration-200 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-gray-900"
+                  className="px-6 py-3 rounded-lg bg-teal-500 text-white font-medium hover:bg-teal-400 transition-colors focus:outline-none focus:ring-2 focus:ring-teal-500/50"
                 >
                   Send
                 </button>
@@ -370,10 +365,10 @@ export default function Chat() {
           </>
         ) : (
           <div className="flex-1 flex items-center justify-center">
-            <div className="text-center space-y-4">
-              <div className="w-20 h-20 mx-auto rounded-full bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center">
+            <div className="text-center">
+              <div className="w-16 h-16 mx-auto rounded-lg bg-zinc-800 flex items-center justify-center mb-4">
                 <svg
-                  className="w-10 h-10 text-white"
+                  className="w-8 h-8 text-zinc-400"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -381,12 +376,12 @@ export default function Chat() {
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
-                    strokeWidth={2}
+                    strokeWidth={1.5}
                     d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
                   />
                 </svg>
               </div>
-              <p className="text-gray-400 text-lg">Select a room to start chatting</p>
+              <p className="text-zinc-400">Select a room to start chatting</p>
             </div>
           </div>
         )}

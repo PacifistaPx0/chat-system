@@ -53,17 +53,17 @@ export default function Register() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 to-gray-800">
-      <div className="max-w-md w-full space-y-8 p-10 bg-white/10 backdrop-blur-lg rounded-2xl shadow-xl">
+    <div className="min-h-screen flex items-center justify-center bg-zinc-900">
+      <div className="max-w-md w-full space-y-6 p-8 bg-zinc-800/50 rounded-lg border border-zinc-700/50">
         <div>
-          <h2 className="text-center text-4xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
-            Create Account
+          <h2 className="text-3xl font-bold text-white text-center">
+            Create account
           </h2>
-          <p className="mt-3 text-center text-gray-400">
-            Join Chat Sphere today
+          <p className="mt-2 text-center text-zinc-400">
+            Join Chat to start messaging
           </p>
         </div>
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+        <form className="mt-8 space-y-5" onSubmit={handleSubmit}>
           {error && (
             <div className="bg-red-500/10 border border-red-500/50 text-red-400 text-sm rounded-lg p-3 text-center">
               {error}
@@ -71,28 +71,30 @@ export default function Register() {
           )}
           <div className="space-y-4">
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-2">
+              <label htmlFor="email" className="block text-sm font-medium text-zinc-300 mb-1.5">
                 Email
               </label>
               <input
+                id="email"
                 name="email"
                 type="email"
                 required
-                className="appearance-none relative block w-full px-4 py-3 border border-gray-700 bg-gray-800/50 placeholder-gray-500 text-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                className="w-full px-4 py-3 bg-zinc-900/50 border border-zinc-700 rounded-lg text-zinc-200 placeholder-zinc-500 focus:outline-none focus:ring-1 focus:ring-teal-500/50"
                 placeholder="Enter your email"
                 value={formData.email}
                 onChange={handleChange}
               />
             </div>
             <div>
-              <label htmlFor="username" className="block text-sm font-medium text-gray-300 mb-2">
+              <label htmlFor="username" className="block text-sm font-medium text-zinc-300 mb-1.5">
                 Username
               </label>
               <input
+                id="username"
                 name="username"
                 type="text"
                 required
-                className="appearance-none relative block w-full px-4 py-3 border border-gray-700 bg-gray-800/50 placeholder-gray-500 text-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                className="w-full px-4 py-3 bg-zinc-900/50 border border-zinc-700 rounded-lg text-zinc-200 placeholder-zinc-500 focus:outline-none focus:ring-1 focus:ring-teal-500/50"
                 placeholder="Choose a username"
                 value={formData.username}
                 onChange={handleChange}
@@ -100,43 +102,46 @@ export default function Register() {
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label htmlFor="firstName" className="block text-sm font-medium text-gray-300 mb-2">
+                <label htmlFor="firstName" className="block text-sm font-medium text-zinc-300 mb-1.5">
                   First Name
                 </label>
                 <input
+                  id="firstName"
                   name="firstName"
                   type="text"
                   required
-                  className="appearance-none relative block w-full px-4 py-3 border border-gray-700 bg-gray-800/50 placeholder-gray-500 text-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                  placeholder="First Name"
+                  className="w-full px-4 py-3 bg-zinc-900/50 border border-zinc-700 rounded-lg text-zinc-200 placeholder-zinc-500 focus:outline-none focus:ring-1 focus:ring-teal-500/50"
+                  placeholder="First name"
                   value={formData.firstName}
                   onChange={handleChange}
                 />
               </div>
               <div>
-                <label htmlFor="lastName" className="block text-sm font-medium text-gray-300 mb-2">
+                <label htmlFor="lastName" className="block text-sm font-medium text-zinc-300 mb-1.5">
                   Last Name
                 </label>
                 <input
+                  id="lastName"
                   name="lastName"
                   type="text"
                   required
-                  className="appearance-none relative block w-full px-4 py-3 border border-gray-700 bg-gray-800/50 placeholder-gray-500 text-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                  placeholder="Last Name"
+                  className="w-full px-4 py-3 bg-zinc-900/50 border border-zinc-700 rounded-lg text-zinc-200 placeholder-zinc-500 focus:outline-none focus:ring-1 focus:ring-teal-500/50"
+                  placeholder="Last name"
                   value={formData.lastName}
                   onChange={handleChange}
                 />
               </div>
             </div>
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-300 mb-2">
+              <label htmlFor="password" className="block text-sm font-medium text-zinc-300 mb-1.5">
                 Password
               </label>
               <input
+                id="password"
                 name="password"
                 type="password"
                 required
-                className="appearance-none relative block w-full px-4 py-3 border border-gray-700 bg-gray-800/50 placeholder-gray-500 text-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                className="w-full px-4 py-3 bg-zinc-900/50 border border-zinc-700 rounded-lg text-zinc-200 placeholder-zinc-500 focus:outline-none focus:ring-1 focus:ring-teal-500/50"
                 placeholder="Create a password"
                 value={formData.password}
                 onChange={handleChange}
@@ -147,16 +152,16 @@ export default function Register() {
           <div>
             <button
               type="submit"
-              className="group relative w-full flex justify-center py-3 px-4 rounded-lg text-sm font-semibold text-white bg-gradient-to-r from-purple-500 to-pink-500 hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transition-all duration-200 ease-in-out"
+              className="w-full px-4 py-3 bg-teal-500 text-white font-medium rounded-lg hover:bg-teal-400 transition-colors focus:outline-none focus:ring-2 focus:ring-teal-500/50"
             >
-              Create Account
+              Create account
             </button>
           </div>
         </form>
         <div className="text-center">
-          <Link 
-            to="/login" 
-            className="text-purple-400 hover:text-purple-300 text-sm font-medium transition-colors duration-200"
+          <Link
+            to="/login"
+            className="text-teal-400 hover:text-teal-300 text-sm font-medium transition-colors"
           >
             Already have an account? Sign in
           </Link>

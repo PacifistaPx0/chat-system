@@ -31,17 +31,17 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 to-gray-800">
-      <div className="max-w-md w-full space-y-8 p-10 bg-white/10 backdrop-blur-lg rounded-2xl shadow-xl">
+    <div className="min-h-screen flex items-center justify-center bg-zinc-900">
+      <div className="max-w-md w-full space-y-6 p-8 bg-zinc-800/50 rounded-lg border border-zinc-700/50">
         <div>
-          <h2 className="text-center text-4xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
-            Welcome Back
+          <h2 className="text-3xl font-bold text-white text-center">
+            Welcome back
           </h2>
-          <p className="mt-3 text-center text-gray-400">
-            Sign in to continue to Chat Sphere
+          <p className="mt-2 text-center text-zinc-400">
+            Sign in to continue to Chat
           </p>
         </div>
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+        <form className="mt-8 space-y-5" onSubmit={handleSubmit}>
           {error && (
             <div className="bg-red-500/10 border border-red-500/50 text-red-400 text-sm rounded-lg p-3 text-center">
               {error}
@@ -49,28 +49,28 @@ export default function Login() {
           )}
           <div className="space-y-4">
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-2">
+              <label htmlFor="email" className="block text-sm font-medium text-zinc-300 mb-1.5">
                 Email
               </label>
               <input
                 id="email"
                 type="email"
                 required
-                className="appearance-none relative block w-full px-4 py-3 border border-gray-700 bg-gray-800/50 placeholder-gray-500 text-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                className="w-full px-4 py-3 bg-zinc-900/50 border border-zinc-700 rounded-lg text-zinc-200 placeholder-zinc-500 focus:outline-none focus:ring-1 focus:ring-teal-500/50"
                 placeholder="Enter your email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
             </div>
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-300 mb-2">
+              <label htmlFor="password" className="block text-sm font-medium text-zinc-300 mb-1.5">
                 Password
               </label>
               <input
                 id="password"
                 type="password"
                 required
-                className="appearance-none relative block w-full px-4 py-3 border border-gray-700 bg-gray-800/50 placeholder-gray-500 text-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                className="w-full px-4 py-3 bg-zinc-900/50 border border-zinc-700 rounded-lg text-zinc-200 placeholder-zinc-500 focus:outline-none focus:ring-1 focus:ring-teal-500/50"
                 placeholder="Enter your password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -81,16 +81,16 @@ export default function Login() {
           <div>
             <button
               type="submit"
-              className="group relative w-full flex justify-center py-3 px-4 rounded-lg text-sm font-semibold text-white bg-gradient-to-r from-purple-500 to-pink-500 hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transition-all duration-200 ease-in-out"
+              className="w-full px-4 py-3 bg-teal-500 text-white font-medium rounded-lg hover:bg-teal-400 transition-colors focus:outline-none focus:ring-2 focus:ring-teal-500/50"
             >
               Sign in
             </button>
           </div>
         </form>
         <div className="text-center">
-          <Link 
-            to="/register" 
-            className="text-purple-400 hover:text-purple-300 text-sm font-medium transition-colors duration-200"
+          <Link
+            to="/register"
+            className="text-teal-400 hover:text-teal-300 text-sm font-medium transition-colors"
           >
             Don't have an account? Sign up
           </Link>
